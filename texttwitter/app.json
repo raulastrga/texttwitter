@@ -1,8 +1,8 @@
 {
-  "name": "Python on Heroku example",
-  "description": "A barebones Python app, which can easily be deployed to Heroku.",
+  "name": "Sistema Clasificador de Tweets",
+  "description": "Sistema clasificador de tweets con Machine Learning.",
   "image": "heroku/python",
-  "repository": "https://github.com/heroku/python-getting-started",
-  "keywords": ["python", "django" ],
+  "repository": "https://github.com/raulastrga/texttwitter",
+  "keywords": ["python", "Twitter" ],
   "addons": [ "heroku-postgresql" ]
 }
