@@ -11,7 +11,7 @@ def hello():
 def main():
     return "Welcome!"
 
-@app.route('/usuario', methods=['POST'])
+@app.route('/usuario')
 def PredecirUsuario():
     return "lala"
 
