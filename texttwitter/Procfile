@@ -1,1 +1,1 @@
-web: gunicorn <TiempoReal>:app --log-file -
+web: gunicorn <app>:app --log-file -
