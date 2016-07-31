@@ -60,7 +60,6 @@ def Predecir(data):
 
     #-----------------
     time.sleep(5)
-    print (resultado)
     return resultado
 
 class Collector(StreamListener):
