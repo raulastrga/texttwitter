@@ -10,7 +10,7 @@ def hello():
 
 @app.route('/stream/<string:texto>')
 def PredecirUsuario(texto):
-    return TiempoReal.Inicio(texto)
+    return Response(TiempoReal.Inicio(texto))
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
