@@ -75,7 +75,7 @@ class Collector(StreamListener):
         return True
 
 
-def Iniciar():
+if __name__ == '__main__':
     #Cargando Modelo CountVectorizer
     with open('CountVectorizer.pkl', 'rb') as f:
         count_vect = pickle.load(f)
