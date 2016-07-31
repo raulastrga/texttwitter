@@ -11,9 +11,9 @@ def hello():
 def main():
     return "Welcome!"
 
-@app.route('/usuario')
-def PredecirUsuario():
-    return "lala"
+@app.route('/usuario/<string:usr>')
+def PredecirUsuario(usr):
+    return usr
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
