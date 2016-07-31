@@ -31,7 +31,7 @@ def Predecir(X_test):
     #Y_pred=clf.predict(X_test)
     #print ("Resultado: ", Clases[Y_pred[0]-1])
     #-------------------
-    
+
     #Predecir con probabilidades
     Y_pred=clf.predict_proba(X_test)
     Y_pred = np.array(Y_pred)
@@ -75,7 +75,7 @@ class Collector(StreamListener):
         return True
 
 
-if __name__ == '__main__':
+def Iniciar():
     #Cargando Modelo CountVectorizer
     with open('CountVectorizer.pkl', 'rb') as f:
         count_vect = pickle.load(f)
