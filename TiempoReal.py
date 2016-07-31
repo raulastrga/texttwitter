@@ -15,19 +15,23 @@ from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy.streaming import StreamListener
 import time
-import config2 as config
+import config
 import pickle
 import json
 import numpy as np
 import re
 
-def Predecir(X_test):
+#Cargando Modelo CountVectorizer
+with open('Modelos/CountVectorizer.pkl', 'rb') as f:
+    count_vect = pickle.load(f)
+
+#Cargando Modelo SVM
+with open('Modelos/SVM.pkl', 'rb') as f:
+    clf = pickle.load(f)
+
+def Predecir(data):
     Arreglo = []
     datos = json.loads(data)
-
-    print ("===========================================================================")
-    print(datos['text'].encode('utf-8'))
-    print ("===========================================================================")
 
     #Se eliminan las URLS
     Linea = re.sub(r'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))', 'http://link//', datos['text'].encode("utf-8"))
@@ -50,18 +54,14 @@ def Predecir(X_test):
     Y_pred=clf.predict_proba(X_test)
     Y_pred = np.array(Y_pred)
 
-    print ("Resultado: ")
-    print ("Alegria: \t", round(Y_pred[0,0]*100, 2), "%")
-    print ("Enojo: \t\t", round(Y_pred[0,1]*100, 2), "%")
-    print ("Miedo: \t\t", round(Y_pred[0,2]*100, 2), "%")
-    print ("Neutral: \t", round(Y_pred[0,3]*100, 2), "%")
-    print ("Repulsion: \t", round(Y_pred[0,4]*100, 2), "%")
-    print ("Sorpresa: \t", round(Y_pred[0,5]*100, 2), "%")
-    print ("Tristeza: \t", round(Y_pred[0,6]*100, 2), "%")
-    #-----------------
+    resultado = {'tweet': data, 'resultado': {'alegria': Y_pred[0,0], 'enojo': Y_pred[0,1], 'miedo':Y_pred[0,2],
+                                                'neutral': Y_pred[0,3], 'repulsion': Y_pred[0,4], 'sorpresa': Y_pred[0,5],
+                                                'tristeza': Y_pred[0,6]}}
 
-    print ("\n")
+    #-----------------
     time.sleep(5)
+    print (resultado)
+    return resultado
 
 class Collector(StreamListener):
     def on_data(self, data):
@@ -79,13 +79,6 @@ class Collector(StreamListener):
 
 
 def Inicio(Texto):
-    #Cargando Modelo CountVectorizer
-    with open('CountVectorizer.pkl', 'rb') as f:
-        count_vect = pickle.load(f)
-
-    #Cargando Modelo SVM
-    with open('SVM.pkl', 'rb') as f:
-        clf = pickle.load(f)
 
     #Obteniendo Tweets en tiempo real
     auth = OAuthHandler(config.consumer_key, config.consumer_secret)
