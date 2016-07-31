@@ -60,17 +60,18 @@ def Predecir(data):
 
     #-----------------
     time.sleep(5)
+    print("lala")
     return resultado
 
 class Collector(StreamListener):
     def on_data(self, data):
         try:
             Predecir(data)
-            return True
         except BaseException as e:
+            resultado = {'tweet':'','resultado':'','error':str(e)}
             print("Error on_data: %s" % str(e))
             time.sleep(15)
-        return True
+            return resultado
 
     def on_error(self, status):
         print(status)
