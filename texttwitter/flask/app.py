@@ -13,14 +13,7 @@ def main():
 
 @app.route('/usuario', methods=['POST'])
 def PredecirUsuario():
-    #Cargar valores
-    _usr = request.form['usr']
-
-    # validate the received values
-    if _usr:
-        return json.dumps({'html':'<span>All fields good !!</span>'})
-    else:
-        return json.dumps({'html':'<span>Enter the required fields</span>'})
+    return "lala"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
