@@ -22,6 +22,20 @@ import numpy as np
 import re
 
 def Predecir(X_test):
+    Arreglo = []
+    datos = json.loads(data)
+
+    print ("===========================================================================")
+    print(datos['text'].encode('utf-8'))
+    print ("===========================================================================")
+
+    #Se eliminan las URLS
+    Linea = re.sub(r'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))', 'http://link//', datos['text'].encode("utf-8"))
+
+    Arreglo.append(Linea)
+
+    X_test = Arreglo
+
     Clases =["Alegria", "Enojo", "Miedo", "Neutral", "Repulsion", "Sorpresa", "Tristeza"]
     X_test = np.array(X_test)
     #Se crea el arreglo con la cuenta de las palabras
@@ -52,18 +66,7 @@ def Predecir(X_test):
 class Collector(StreamListener):
     def on_data(self, data):
         try:
-            Arreglo = []
-            datos = json.loads(data)
-
-            print ("===========================================================================")
-            print(datos['text'].encode('utf-8'))
-            print ("===========================================================================")
-
-            #Se eliminan las URLS
-            Linea = re.sub(r'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))', 'http://link//', datos['text'].encode("utf-8"))
-
-            Arreglo.append(Linea)
-            Predecir(Arreglo)
+            Predecir(data)
             return True
         except BaseException as e:
             print("Error on_data: %s" % str(e))
@@ -75,7 +78,7 @@ class Collector(StreamListener):
         return True
 
 
-if __name__ == '__main__':
+def Inicio(Texto):
     #Cargando Modelo CountVectorizer
     with open('CountVectorizer.pkl', 'rb') as f:
         count_vect = pickle.load(f)
@@ -90,4 +93,4 @@ if __name__ == '__main__':
     api = tweepy.API(auth)
 
     twitter_stream = Stream(auth=auth, listener=Collector())
-    twitter_stream.filter(track=['de'], languages=["es"])
+    twitter_stream.filter(track=[Texto], languages=["es"])

@@ -1,19 +1,16 @@
 from flask import Flask
 import os
 import json
+import TiempoReal
 app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    return "Hello world!"
+    return "Hola"
 
-@app.route("/")
-def main():
-    return "Welcome!"
-
-@app.route('/usuario/<string:usr>')
-def PredecirUsuario(usr):
-    return usr
+@app.route('/stream/<string:texto>')
+def PredecirUsuario(texto):
+    return TiempoReal.Inicio(texto)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
