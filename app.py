@@ -22,7 +22,7 @@ def Stream(texto):
 @app.route('/usuario/<string:texto>')
 @cross_origin()
 def Usuario(texto):
-    a = json.dumps(search.TiempoReal(texto))
+    a = json.dumps(search.Usuario(texto))
     return a
 
 if __name__ == "__main__":
