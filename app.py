@@ -16,12 +16,13 @@ def hello():
 @app.route('/stream/<string:texto>')
 @cross_origin()
 def Stream(texto):
-    a = str(search.TiempoReal(texto))
+    a = json.dumps(search.TiempoReal(texto))
     return a
 
 @app.route('/usuario/<string:texto>')
+@cross_origin()
 def Usuario(texto):
-    a = str(search.TiempoReal(texto))
+    a = json.dumps(search.TiempoReal(texto))
     return a
 
 if __name__ == "__main__":
