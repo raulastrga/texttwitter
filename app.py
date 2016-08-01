@@ -1,16 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, stream_with_context, request, Response
+from flask.ext.cors import CORS, cross_origin
 import os
 import json
 import search
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route("/")
 def hello():
     return "<a href='http://www.raulastorga.hol.es'>Ir a mi Currículum</a>"
 
 @app.route('/stream/<string:texto>')
+@cross_origin()
 def Stream(texto):
     a = str(search.TiempoReal(texto))
     return a
