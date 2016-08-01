@@ -86,7 +86,6 @@ def TiempoReal(Texto):
         return TweetsRetornar
     except BaseException as e:
         resultado = {'error':str(e)}
-        print("error")
         return resultado
 
 def Usuario(Usr):
@@ -95,7 +94,7 @@ def Usuario(Usr):
 
     api = tweepy.API(auth)
 
-    c = tweepy.Cursor(api.user_timeline, screen_name = Usr, count = 30).items(opts.nitems)
+    c = tweepy.Cursor(api.user_timeline, screen_name = Usr, count = 30).items(50)
 
     try:
         TweetsRetornar = []
@@ -106,5 +105,4 @@ def Usuario(Usr):
         return TweetsRetornar
     except BaseException as e:
         resultado = {'error':str(e)}
-        print("error")
         return resultado
