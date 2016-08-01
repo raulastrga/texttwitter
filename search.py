@@ -1,25 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Raúl Astorga Castro // raulastorga@openmailbox.org
+# Ivan Vladimir Meza-Ruiz/ ivanvladimir at turing.iimas.unam.mx
+# 2016/IIMAS/UNAM
 # ----------------------------------------------------------------------
-
-# Cargando librerias
 from __future__ import division, print_function  # Python 2 users only
-import argparse
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.svm import SVC
-from sklearn.metrics import classification_report
-from sklearn.cross_validation import train_test_split
 import tweepy
 from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy.streaming import StreamListener
 import time
-import config
+import argparse
+import string
+import json
+import os
+
+import argparse
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report
+from sklearn.cross_validation import train_test_split
 import pickle
 import json
 import numpy as np
 import re
+
+import config
 
 #Cargando Modelo CountVectorizer
 with open('Modelos/CountVectorizer.pkl', 'rb') as f:
@@ -56,41 +61,50 @@ def Predecir(data):
 
     resultado = {'tweet': data, 'resultado': {'alegria': Y_pred[0,0], 'enojo': Y_pred[0,1], 'miedo':Y_pred[0,2],
                                                 'neutral': Y_pred[0,3], 'repulsion': Y_pred[0,4], 'sorpresa': Y_pred[0,5],
-                                                'tristeza': Y_pred[0,6]}}
+                                                'tristeza': Y_pred[0,6]}, 'error': 0}
 
     #-----------------
-    time.sleep(5)
-    print("lala")
     return resultado
 
-resultado = None
-
-class Collector(StreamListener):
-    def on_data(self, data):
-        try:            
-            global resultado
-            resultado = Predecir(data)
-            print (resultado)
-            return "Ok"
-        except BaseException as e:
-            resultado = {'tweet':'','resultado':'','error':str(e)}
-            print("Error on_data: %s" % str(e))
-            time.sleep(15)
-            return resultado
-
-    def on_error(self, status):
-        print(status)
-        return True
-
-def getresult():
-    return resultado
-
-def Inicio(Texto):
-
-    #Obteniendo Tweets en tiempo real
+def TiempoReal(Texto):
     auth = OAuthHandler(config.consumer_key, config.consumer_secret)
     auth.set_access_token(config.access_token, config.access_secret)
+
     api = tweepy.API(auth)
 
-    twitter_stream = Stream(auth=auth, listener=Collector())
-    twitter_stream.filter(track=[Texto], languages=["es"], async=True)
+    c = tweepy.Cursor(api.search,
+                       q=Texto.decode('unicode-escape'),
+                       rpp=10,
+                       result_type="recents",
+                       lang=['es']).items(20)
+    try:
+        TweetsRetornar = []
+        for tweet in c:
+            jtweet=json.dumps(tweet._json)
+            print (jtweet)
+            TweetsRetornar.append(Predecir(jtweet))
+        return TweetsRetornar
+    except BaseException as e:
+        resultado = {'error':str(e)}
+        print("error")
+        return resultado
+
+def Usuario(Usr):
+    auth = OAuthHandler(config.consumer_key, config.consumer_secret)
+    auth.set_access_token(config.access_token, config.access_secret)
+
+    api = tweepy.API(auth)
+
+    c = tweepy.Cursor(api.user_timeline, screen_name = Usr, count = 30).items(opts.nitems)
+
+    try:
+        TweetsRetornar = []
+        for tweet in c:
+            jtweet=json.dumps(tweet._json)
+            print (jtweet)
+            TweetsRetornar.append(Predecir(jtweet))
+        return TweetsRetornar
+    except BaseException as e:
+        resultado = {'error':str(e)}
+        print("error")
+        return resultado
