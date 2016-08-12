@@ -5,6 +5,7 @@ from flask.ext.cors import CORS, cross_origin
 import os
 import json
 import search
+import sys
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -16,6 +17,8 @@ def hello():
 @app.route('/stream/<string:texto>')
 @cross_origin()
 def Stream(texto):
+    if texto[:2] == "-%":
+        texto=texto.replace("-%", "#")
     a = json.dumps(search.TiempoReal(texto))
     return a
 

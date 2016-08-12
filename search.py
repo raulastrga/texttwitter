@@ -13,6 +13,7 @@ import argparse
 import string
 import json
 import os
+import hashlib
 
 import argparse
 from sklearn.feature_extraction.text import CountVectorizer
@@ -33,6 +34,9 @@ with open('Modelos/CountVectorizer.pkl', 'rb') as f:
 #Cargando Modelo SVM
 with open('Modelos/SVM.pkl', 'rb') as f:
     clf = pickle.load(f)
+
+#Diccionario para repetidos
+Dicc = {}
 
 def Predecir(data):
     Arreglo = []
@@ -66,6 +70,22 @@ def Predecir(data):
     #-----------------
     return resultado
 
+def EliminarRepetidos(data):
+    #Elimina URLS
+    data['text'] = re.sub(r'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))', 'http://link//', data['text'].encode("utf-8")).decode("utf-8")
+
+    #Convierte a Hash
+    hash_object = hashlib.md5(data['text'].encode("utf-8"))
+
+    #INTENTA BUSCARLO, SI LO ENCUENTRA REPETIDO NO AGREGA, SINO LO ENCUENTRA AGREGA
+    try:
+        if(Dicc[hash_object.hexdigest()]) == 0:
+            i = 1
+            return True
+    except:
+        Dicc[hash_object.hexdigest()] = 0
+        return False
+
 def TiempoReal(Texto):
     auth = OAuthHandler(config.consumer_key, config.consumer_secret)
     auth.set_access_token(config.access_token, config.access_secret)
@@ -73,16 +93,22 @@ def TiempoReal(Texto):
     api = tweepy.API(auth)
 
     c = tweepy.Cursor(api.search,
-                       q=Texto.decode('unicode-escape'),
-                       rpp=10,
+                       q=Texto,
+                       rpp=30,
                        result_type="recents",
-                       lang=['es']).items(20)
+                       lang=['es']).items(50)
     try:
         TweetsRetornar = []
         for tweet in c:
+
+            data = tweet._json
+            Repetido = EliminarRepetidos(data)
+
             jtweet=json.dumps(tweet._json)
-            print (jtweet)
-            TweetsRetornar.append(Predecir(jtweet))
+
+            #print (jtweet)
+            if Repetido == False:
+                TweetsRetornar.append(Predecir(jtweet))
         return TweetsRetornar
     except BaseException as e:
         resultado = {'error':str(e)}
@@ -100,7 +126,7 @@ def Usuario(Usr):
         TweetsRetornar = []
         for tweet in c:
             jtweet=json.dumps(tweet._json)
-            print (jtweet)
+            #print (jtweet)
             TweetsRetornar.append(Predecir(jtweet))
         return TweetsRetornar
     except BaseException as e:
