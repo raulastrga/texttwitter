@@ -24,6 +24,7 @@ import pickle
 import json
 import numpy as np
 import re
+import sys
 
 import config
 
@@ -63,7 +64,14 @@ def Predecir(data):
     Y_pred=clf.predict_proba(X_test)
     Y_pred = np.array(Y_pred)
 
-    resultado = {'tweet': data, 'resultado': {'alegria': Y_pred[0,0], 'enojo': Y_pred[0,1], 'miedo':Y_pred[0,2],
+    _tweet = {}
+    _tweet["user"] = {}
+    _tweet["user"]["name"] = datos["user"]["name"]
+    _tweet["user"]["screen_name"] = datos["user"]["screen_name"]
+    _tweet["user"]["profile_image_url_https"] = datos["user"]["profile_image_url_https"]
+    _tweet["id_str"] = datos["id_str"]
+
+    resultado = {'tweet': json.dumps(_tweet), 'resultado': {'alegria': Y_pred[0,0], 'enojo': Y_pred[0,1], 'miedo':Y_pred[0,2],
                                                 'neutral': Y_pred[0,3], 'repulsion': Y_pred[0,4], 'sorpresa': Y_pred[0,5],
                                                 'tristeza': Y_pred[0,6]}, 'error': 0}
 
