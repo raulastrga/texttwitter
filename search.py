@@ -43,6 +43,10 @@ def Predecir(data):
     Arreglo = []
     datos = json.loads(data)
 
+    #Se agrega el texto antes de que se eliminen las urls
+    _tweet = {}
+    _tweet["text"] = datos["text"]
+
     #Se eliminan las URLS
     Linea = re.sub(r'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))', 'http://link//', datos['text'].encode("utf-8"))
 
@@ -64,15 +68,14 @@ def Predecir(data):
     Y_pred=clf.predict_proba(X_test)
     Y_pred = np.array(Y_pred)
 
-    _tweet = {}
+    #Se termina el objeto a retornar
     _tweet["user"] = {}
     _tweet["user"]["name"] = datos["user"]["name"]
     _tweet["user"]["screen_name"] = datos["user"]["screen_name"]
     _tweet["user"]["profile_image_url_https"] = datos["user"]["profile_image_url_https"]
     _tweet["id_str"] = datos["id_str"]
     _tweet["created_at"] = datos["created_at"]
-    _tweet["text"] = datos["text"]
-    
+
     resultado = {'tweet': json.dumps(_tweet), 'resultado': {'alegria': Y_pred[0,0], 'enojo': Y_pred[0,1], 'miedo':Y_pred[0,2],
                                                 'neutral': Y_pred[0,3], 'repulsion': Y_pred[0,4], 'sorpresa': Y_pred[0,5],
                                                 'tristeza': Y_pred[0,6]}, 'error': 0}
