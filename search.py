@@ -25,6 +25,7 @@ import json
 import numpy as np
 import re
 import sys
+import copy
 
 import config
 
@@ -115,7 +116,9 @@ def TiempoReal(Texto):
         for tweet in c:
 
             data = tweet._json
-            Repetido = EliminarRepetidos(data)
+
+            data2 = copy.copy(data)
+            Repetido = EliminarRepetidos(data2)
 
             jtweet=json.dumps(tweet._json)
 
