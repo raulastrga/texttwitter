@@ -70,7 +70,9 @@ def Predecir(data):
     _tweet["user"]["screen_name"] = datos["user"]["screen_name"]
     _tweet["user"]["profile_image_url_https"] = datos["user"]["profile_image_url_https"]
     _tweet["id_str"] = datos["id_str"]
-
+    _tweet["created_at"] = datos["created_at"]
+    _tweet["text"] = datos["text"]
+    
     resultado = {'tweet': json.dumps(_tweet), 'resultado': {'alegria': Y_pred[0,0], 'enojo': Y_pred[0,1], 'miedo':Y_pred[0,2],
                                                 'neutral': Y_pred[0,3], 'repulsion': Y_pred[0,4], 'sorpresa': Y_pred[0,5],
                                                 'tristeza': Y_pred[0,6]}, 'error': 0}
